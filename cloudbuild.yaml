@@ -1,0 +1,17 @@
+steps:
+- name: 'ubuntu'
+  args: ['echo', 'Hello Cloud Build']
+  id: stage-ubuntu
+  dir: '${_TERRAFORM_DIR}' 
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: ['cp', 'gs://spls/gsptest/Dockerfile', 'Dockerfile']
+  id: stage-gsutil 
+  dir: '${_TERRAFORM_DIR}' 
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/test-image', '.']
+  id: stage-docker 
+  dir: '${_TERRAFORM_DIR}' 
+substitutions:  
+  _PROVIDER_VER: 1.0.1
+  _TERRAFORM_DIR: basics/cloud_build/stable
+tags: ['terraform-lab-foundation','cloudbuild', 'ci/cd']  
